@@ -1,0 +1,33 @@
+{
+  "name": "cordova-plugin-idscan",
+  "version": "0.2.0",
+  "description": "Plugin wrapping IDScan.net's iOS and Android ID scanner/parser SDKs",
+  "cordova": {
+    "id": "cordova-plugin-idscan",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IDScanNet/cordova-plugin-idscan.git"
+  },
+  "keywords": [
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "engines": [
+    {
+      "name": "cordova",
+      "version": ">=5.0.0"
+    }
+  ],
+  "author": "IDScanNet",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/IDScanNet/cordova-plugin-idscan/issues"
+  },
+  "homepage": "https://github.com/IDScanNet/cordova-plugin-idscan#readme"
+}

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-idscan"
+        version="0.1.0">
+
+    <name>IDScanner</name>
+    <description>Plugin wrapping IDScan.net's iOS and Android ID scanner/parser SDKs</description>
+    <license>MIT</license>
+
+    <engines>
+        <engine name="cordova" version=">=5.0.0" />
+    </engines>
+
+    <js-module src="www/idscanner.js" name="idscanner">
+        <clobbers target="IDScanner" />
+    </js-module>
+    
+    <!-- android -->
+    <platform name="android">     
+      <config-file target="res/xml/config.xml" parent="/*">
+        <feature name="IDScanner">
+            <param name="android-package" value="com.dpms.idscan.IDScanner"/>
+        </feature>
+      </config-file>
+      
+      <config-file target="AndroidManifest.xml" parent="/*">
+          <uses-permission android:name="android.permission.CAMERA" />
+          <uses-feature android:name="android.hardware.camera" android:required="true" />
+          <uses-feature android:name="android.hardware.camera.autofocus" />
+		  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+      </config-file>
+      <source-file src="src/android/IDScanner.java" target-dir="src/com/dpms/idscan" />
+      <source-file src="src/android/sdk/dlparserlib.jar" target-dir="libs" />
+      <source-file src="src/android/sdk/PDF417Scanner.aar" target-dir="libs" />
+	  <source-file src="src/android/sdk/arm64-v8a/libidscan_parser.so" target-dir="libs/arm64-v8a/" />
+	  <source-file src="src/android/sdk/mips/libidscan_parser.so" target-dir="libs/mips/" />
+	  <source-file src="src/android/sdk/mips64/libidscan_parser.so" target-dir="libs/mips64/" />
+	  <source-file src="src/android/sdk/x86_64/libidscan_parser.so" target-dir="libs/x86_64/" />
+	  <source-file src="src/android/sdk/armeabi/libidscan_parser.so" target-dir="libs/armeabi/" />
+      <source-file src="src/android/sdk/armeabi-v7a/libidscan_parser.so" target-dir="libs/armeabi-v7a/" />
+      <source-file src="src/android/sdk/x86/libidscan_parser.so" target-dir="libs/x86/" />
+      
+      <framework src="src/android/build-scanner.gradle" custom="true" type="gradleReference" />
+      <resource-file src="src/android/sdk/PDF417Scanner.aar" target="libs/PDF417Scanner.aar" />   
+	  <preference name="ANDROID_SUPPORT_V4_VERSION" default="27.+"/>
+      <framework src="com.android.support:support-v4:$ANDROID_SUPPORT_V4_VERSION"/>	  
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <info>
+          iOS extra steps to make this plugin work:
+          
+          You *MAY* need to add BarcodeScanner.framework to the Embedded Binaries 
+          section of your Xcode project
+        </info>
+        
+        <config-file target="config.xml" parent="/*">
+            <feature name="IDScanner">
+                <param name="ios-package" value="IDScanner" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/IDScanner.h" />
+        <source-file src="src/ios/IDScanner.m" />
+
+        <header-file src="src/ios/ScannerViewController.h" />
+        <source-file src="src/ios/ScannerViewController.m" />
+        
+        <framework src="src/ios/sdk/BarcodeScanner.framework" custom="true" embed="true" />
+        <header-file src="src/ios/sdk/DriverLicenseParser.h" />
+        <source-file src="src/ios/sdk/libDriverLicenseParser.a" framework="true" />		
+    </platform>		
+</plugin>
