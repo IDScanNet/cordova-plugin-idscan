@@ -217,8 +217,9 @@
                         initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
                         target:self
                         action:@selector(closeBtn:)
+
                         ];
-    id flexSpace = [[UIBarButtonItem alloc]
+     id flexSpace = [[UIBarButtonItem alloc]
                     initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
                     target:nil
                     action:nil
@@ -233,8 +234,14 @@
      CGRect  rectArea       = CGRectMake(0, rootViewHeight - toolbarHeight, rootViewWidth, toolbarHeight);
      [toolbar setFrame:rectArea];
      [overlayView addSubview: toolbar];
+     CGRect  redArea       = CGRectMake(35, 50, rootViewWidth - 70, rootViewHeight - 100 - toolbarHeight);
+     UIView *redView = [[UIView alloc] initWithFrame:redArea];
+     redView.backgroundColor = [UIColor clearColor];
+     redView.layer.cornerRadius = 5;
+     redView.layer.borderWidth = 2;
+     redView.layer.borderColor = [UIColor redColor].CGColor;
+     [overlayView addSubview: redView];
      [self.view addSubview:overlayView];
-
 }
 
 - (void) onVideoStart: (NSNotification*) note
