@@ -1,6 +1,6 @@
 #import "IDScanner.h"
 #import "ScannerViewController.h"
-#import "DriverLicenseParser.h"
+#import <idscanParser/idscanParser.h>
 #import <Cordova/CDV.h>
 #import <AVFoundation/AVFoundation.h>
 

@@ -8,7 +8,12 @@
 
 #include <mach/mach_host.h>
 #import "ScannerViewController.h"
-#import <BarcodeScanner/Barcode2DScanner.h>
+
+#if TARGET_IPHONE_SIMULATOR
+#import <BarcodeScannerSimulator/BarcodeScannerSimulator.h>
+#else
+#import <BarcodeScanner/BarcodeScanner.h>
+#endif
 
 @implementation ScannerViewController {
     AVCaptureSession *_captureSession;

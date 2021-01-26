@@ -2,7 +2,7 @@
     <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
         xmlns:android="http://schemas.android.com/apk/res/android"
         id="cordova-plugin-idscan"
-        version="0.1.0">
+        version="1.0.0">
 
     <name>IDScanner</name>
     <description>Plugin wrapping IDScan.net's iOS and Android ID scanner/parser SDKs</description>
@@ -67,9 +67,7 @@
 
         <header-file src="src/ios/ScannerViewController.h" />
         <source-file src="src/ios/ScannerViewController.m" />
-        
-        <framework src="src/ios/sdk/BarcodeScanner.framework" custom="true" embed="true" />
-        <header-file src="src/ios/sdk/DriverLicenseParser.h" />
-        <source-file src="src/ios/sdk/libDriverLicenseParser.a" framework="true" />		
+        <framework src="src/ios/sdk/BarcodeScanner.xcframework" custom="true" embed="true" />
+        <framework src="src/ios/sdk/idscanParser.xcframework" custom="true" embed="true" />
     </platform>		
 </plugin>
