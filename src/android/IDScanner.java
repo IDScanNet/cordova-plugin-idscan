@@ -11,18 +11,18 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import android.util.Log;
 import java.io.UnsupportedEncodingException;
 import net.idscan.android.dlparser.DLParser;
-import net.idscan.android.pdf417scanner.PDF417ScanActivity;
-
+import net.idscan.components.android.scanpdf417.PDF417ScanActivity;
+import net.idscan.components.android.scanpdf417.PDF417ScanActivity.PDF417Data;
 
 public class IDScanner extends CordovaPlugin {
     private CallbackContext callbackContext;
     private String cameraKey, parserKey;
-    
+
     private static final String TAG = "IDScannerPlugin";
     private final static int SCAN_ACTIVITY_CODE = 0x001;
     public static final int TAKE_PIC_SEC = 0;
@@ -32,7 +32,7 @@ public class IDScanner extends CordovaPlugin {
     final String test_data = "%MNBURNSVILLE^HOMER J. SYMPSON^13225 MADRID RD^?\n\n;636038326007403611=12091991090106?\n\n%\" 55306      D               F064124   HZL                           X\"+H)     ?";
 
     @Override
-    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {        
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
         Log.d(TAG, "IDScanner method starting: "+action);
 
         if (args.length() < 2) {
@@ -48,7 +48,7 @@ public class IDScanner extends CordovaPlugin {
             Log.d(TAG, "camera scanner key: "+this.cameraKey);
             Log.d(TAG, "id parser key: "+this.parserKey);
         }
-        
+
         boolean takePicturePermission = PermissionHelper.hasPermission(this, Manifest.permission.CAMERA) && PermissionHelper.hasPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
 
         // CB-10120: The CAMERA permission does not need to be requested unless it is declared
@@ -70,7 +70,7 @@ public class IDScanner extends CordovaPlugin {
                 }
             } catch (PackageManager.NameNotFoundException e) {
                 Log.d(TAG, "NameNotFound");
-				
+
 				// We are requesting the info for our package, so this should
                 // never be caught
             }
@@ -91,7 +91,7 @@ public class IDScanner extends CordovaPlugin {
             }
         } else {
             PermissionHelper.requestPermissions(this, TAKE_PIC_SEC, permissions);
-        } 
+        }
 
         return true;
     }
@@ -99,35 +99,52 @@ public class IDScanner extends CordovaPlugin {
     // called when PDF417ScanActivity returns with scan result or error
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == SCAN_ACTIVITY_CODE) {
-            if (resultCode == PDF417ScanActivity.RESULT_OK) {
+            switch (resultCode) {
+              case PDF417ScanActivity.RESULT_OK:
                 if (data != null) {
-                    parse(data.getStringExtra(PDF417ScanActivity.BARCODE_DATA));
+                  PDF417Data result = data.getParcelableExtra(PDF417ScanActivity.DOCUMENT_DATA);
+                  if (result != null) {
+                    parse(new String(result.barcodeData));
+                  }
                 } else {
                     callbackContext.error("ID camera scanner returned no data.");
                 }
-            } else if (resultCode == PDF417ScanActivity.ERROR_INVALID_CAMERA_NUMBER) {
+                break;
+
+            case PDF417ScanActivity.ERROR_RECOGNITION:
+              if (data != null) {
+                String desc = data.getStringExtra(PDF417ScanActivity.ERROR_DESCRIPTION);
+                callbackContext.error(desc);
+              }
+              break;
+
+            case PDF417ScanActivity.ERROR_INVALID_CAMERA_NUMBER:
                 callbackContext.error("Invalid camera number.");
-            } else if (resultCode == PDF417ScanActivity.ERROR_CAMERA_NOT_AVAILABLE) {
+                break;
+            case PDF417ScanActivity.ERROR_CAMERA_NOT_AVAILABLE:
                 callbackContext.error("Camera not available.");
-            } else if (resultCode == PDF417ScanActivity.ERROR_INVALID_CAMERA_ACCESS) {
+                break;
+            case PDF417ScanActivity.ERROR_INVALID_CAMERA_ACCESS:
                 callbackContext.error("Invalid camera access.");
-            } else if (resultCode == PDF417ScanActivity.ERROR_INVALID_LICENSE_KEY) {
-                callbackContext.error("Invalid camera scanner license key.");
+                break;
+            case PDF417ScanActivity.RESULT_CANCELED:
+              callbackContext.error("Result canceled.");
+              break;
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+          }
     }
-            
+
     private void parse(String scanResult) {
         DLParser parser = new DLParser();
         try {
             Context context=this.cordova.getActivity().getApplicationContext();
             parser.setup(context, this.parserKey);
             DLParser.DLResult res = parser.parse(scanResult.getBytes("UTF8"));
-            
-            // Note that there are more fields if we need them, 
+
+            // Note that there are more fields if we need them,
             // refer to DriverLicenseParser.h in iOS code
             JSONObject parseData = new JSONObject();
             parseData.put("fullName", res.fullName);
@@ -147,7 +164,7 @@ public class IDScanner extends CordovaPlugin {
             parseData.put("licenseNumber", res.licenseNumber);
             parseData.put("issuedBy", res.issuedBy);
             parseData.put("gender", res.gender);
-        
+
             this.callbackContext.success(parseData);
         } catch (JSONException e) {
             this.callbackContext.error(e.toString());
