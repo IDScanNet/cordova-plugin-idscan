@@ -1,12 +1,13 @@
-repositories{    
+repositories{
   jcenter()
+  maven { url 'https://www.myget.org/F/idscan-public/maven/' }
   flatDir {
       dirs 'libs'
    }
 }
 
 dependencies {
-   compile(name:'PDF417Scanner', ext:'aar')
+   compile 'net.idscan.components.android:scanpdf417:4.1.0'
 }
 
 android {
