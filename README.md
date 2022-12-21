@@ -20,7 +20,7 @@ Or you can clone the repository locally if you would like to modify the code and
 
     IDScanner.scan(successCallback, errorCallback, cameraKey, parserKey);
 ```
-For all fields available on the result object returned from the IDScanner, refer to DriverLicenseParser.h in the iOS sdk (e.g. firstName, lastName, address1, address2, city, postalCode, licenseNumber, expirationDate, issueDate, etc.)
+For all fields available on the result object returned from the IDScanner, refer to DriverLicenseParser.h in the iOS sdk (e.g. firstName, lastName, address1, address2, city, postalCode, licenseNumber, expirationDate, issueDate, etc)
     
 If you need to update the SDK files from IDScan.net, you can just drop new ones in the sdk folders of the iOS and Android source.
 
